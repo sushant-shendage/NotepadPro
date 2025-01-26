@@ -1,0 +1,13 @@
+//pgm_no:
+//title:
+/*
+ 
+*/
+#include<iostream>
+using namespace std;
+int main()
+{
+cout<<"hellow world";
+
+return 0;
+}
