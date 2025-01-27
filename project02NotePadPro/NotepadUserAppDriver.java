@@ -1000,6 +1000,7 @@ class NotepadUserInterface {
 
     }// NON-STATIC INITIALIZER1-END
 
+    // NON-STATIC INITIALIZER2-START::setting up native systems UI as application UI
     {
         // Attempt to set the Look and Feel of the UI to match the system's native
         // appearance
