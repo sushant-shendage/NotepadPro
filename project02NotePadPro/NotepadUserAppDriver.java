@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.FileReader; // Reads character files using a file path.
 import java.io.FileWriter; // Writes text to files in the file system.
 import java.io.IOException; // Handles input/output exceptions.
- 
+
 import javax.swing.BorderFactory; // Used to create various types of borders for Swing components.
 import javax.swing.ImageIcon;
 // import javax.swing.ImageIcon;
@@ -26,8 +26,6 @@ import javax.swing.JScrollPane; // Adds scrolling capability to components like 
 import javax.swing.JTextArea; // A multi-line area for displaying or editing text.
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-
- 
 
 // 'NotepadUserAppDriver' class will be responsible for launching the Notepad application.
 public class NotepadUserAppDriver {
@@ -201,9 +199,7 @@ class NotepadUserInterface {
         checkingFileAddress();
     }
 
-    
-
-    //method used for debugging purpose
+    // method used for debugging purpose
     void checkingFileAddress() {
         System.out.println("file addreess:" + (fileAddress + fileName));
     }
@@ -231,10 +227,10 @@ class NotepadUserInterface {
         // Makes the main frame visible to the user.
         mainFrame.setVisible(true);
 
-        Image icon=Toolkit.getDefaultToolkit().getImage("./appIcon.png");
-         
-     mainFrame.setIconImage(icon);
-        
+        Image icon = Toolkit.getDefaultToolkit().getImage("./appIcon.png");
+
+        mainFrame.setIconImage(icon);
+
     }
 
     /**
@@ -276,16 +272,6 @@ class NotepadUserInterface {
         // Adds the JScrollPane (with the text area inside) to the main frame.
         mainFrame.add(scrollFeature);
 
-        removeFrameBorder();
-    }
-
-    /**
-     * Method responsible for removing the border around the JScrollPane (frame)
-     * that holds the text area.
-     * It sets the border of the JScrollPane to be empty, creating a clean,
-     * borderless appearance.
-     */
-    void removeFrameBorder() {
         // Sets the border of the JScrollPane to an empty border, removing any visible
         // border around the text area.
         scrollFeature.setBorder(BorderFactory.createEmptyBorder());
@@ -578,54 +564,46 @@ class NotepadUserInterface {
     }
 
     /**
-     * Method responsible for writing the text content from the main frame's text
-     * area to a file.
-     * This method uses a FileWriter to save the current text in the text area to a
-     * file at the specified address.
-     * If an error occurs during the writing process, it clears the text area and
-     * resets the title of the main frame.
+     * Saves the text content from the main frame's text area to a file.
+     * This method uses a FileWriter to write the current text content
+     * to a file specified by the global fileName and fileAddress variables.
+     * If an error occurs during the writing process, the text area is cleared,
+     * and the title of the main frame is reset.
      */
     void writeFile() {
-        System.out.println("filename address ::" + (fileAddress + fileName));
-        // Try-with-resources block for automatically closing the FileWriter after use.
+        System.out.println("Filename and address: " + (fileAddress + fileName));
         try (FileWriter fileWriterObj = new FileWriter(fileAddress + fileName)) {
-            // Writes the current content of the text area to the file at the specified file
-            // path.
+            // Writes the text area content to the specified file.
             fileWriterObj.write(textAreaMainFrame.getText());
-
         } catch (IOException e1) {
-            // If an error occurs during file writing, resets the frame title and clears the
-            // text area.
+            // If file writing fails, reset the frame title and clear the text area.
             mainFrame.setTitle("nofile");
             textAreaMainFrame.setText("");
         }
     }
 
+    /**
+     * Loads boilerplate code into the text area based on the specified file format.
+     * This method reads the content of a boilerplate code file (e.g., Java, Python)
+     * and appends its content to the main frame's text area.
+     * If the file is not found or an error occurs, a warning message is displayed.
+     *
+     * @param fileFormat The format or type of boilerplate code to load (e.g.,
+     *                   "Java", "Python").
+     */
     void writeFile(String fileFormat) {
-
         try (BufferedReader BufferReaderObj = new BufferedReader(
                 new FileReader(".//" + fileFormat + "BoilerPlateCode.txt"))) {
-            String line = null;
-
-            try {
-                // Clears the text area before loading new content
-                textAreaMainFrame.setText("");
-
-                // Reads each line from the boilerplate code file and appends it to the text
-                // area
-                for (line = BufferReaderObj.readLine(); line != null; line = BufferReaderObj.readLine()) {
-                    textAreaMainFrame.append(line + "\n");
-                }
-            } catch (Exception F) {
-                // If the file is not found or an error occurs while reading, show an error
-                // message.
-                JOptionPane.showMessageDialog(mainFrame, "File not found ..!");
+            String line;
+            textAreaMainFrame.setText(""); // Clears the text area before adding content.
+            while ((line = BufferReaderObj.readLine()) != null) {
+                // Appends each line of the boilerplate code to the text area.
+                textAreaMainFrame.append(line + "\n");
             }
         } catch (IOException e1) {
-            // Handle IOExceptions and display an error message if file reading fails.
-            JOptionPane.showMessageDialog(mainFrame, "File not found ..!");
+            // If the boilerplate code file is not found, display an error message.
+            JOptionPane.showMessageDialog(mainFrame, "File not found!");
         }
-
     }
 
     /**
@@ -727,25 +705,24 @@ class NotepadUserInterface {
      * Each functionality is bound to an action listener that performs the desired
      * task when triggered.
      */
+    // NON-STATIC INITIALIZER1-START
     {
         /**
          * Action listener for the "Save" menu item in the application.
          * 
          * This listener performs the following tasks:
+         * 
          * 1. **If the file is untitled**:
-         * - A file dialog is displayed to allow the user to specify the file name and
-         * directory.
-         * - Once the user selects a location, the file is saved, and the file name is
-         * set to the main frame title.
-         * - The content of the text area is written to the file.
-         * - A confirmation message is shown to the user indicating the changes were
-         * saved.
+         * - The `saveAs()` method is invoked to prompt the user to select a file name
+         * and location.
+         * - After a valid file is selected, the file is saved, and the main frame's
+         * title is updated with the file name.
          * 
          * 2. **If the file is already named**:
-         * - The file is saved directly without prompting the user for a file name.
-         * - The content of the text area is written to the existing file.
-         * - A confirmation message is shown to the user indicating the changes were
-         * saved.
+         * - The file is saved directly to the existing file path.
+         * - The content of the text area is written to the file.
+         * - A confirmation message is displayed to inform the user that changes have
+         * been successfully saved.
          * 
          * @param al Action event passed to the listener (not used in this
          *           implementation).
@@ -762,6 +739,9 @@ class NotepadUserInterface {
             }
         };
 
+        // Action listener for the "Save As" functionality.
+        // This invokes the saveAs() method, which opens a file dialog to let the user
+        // specify a file name and location for saving the current content.
         functionSaveAs = e -> saveAs();
 
         /**
@@ -787,7 +767,6 @@ class NotepadUserInterface {
          */
         functionnewFile = (al) -> {
             // Reset the file-related variables
-
             new NotepadUserInterface();
         };
 
@@ -971,33 +950,16 @@ class NotepadUserInterface {
         };
 
         /**
-         * Action listener for integrating the command prompt (CMD) functionality within
-         * the application.
-         * 
-         * This listener is triggered when the user selects the option to open the
-         * command prompt (CMD) via the application's menu.
-         * The listener launches a new CMD window using the system's runtime
-         * environment.
-         * 
-         * - It runs the command `cmd /c start`, which opens the default command prompt
-         * on Windows.
-         * - If an error occurs during execution, an error message is shown in a dialog.
-         * 
-         * @param al Action event passed to the listener (not used in this
-         *           implementation).
+         * Listener for opening the command prompt (CMD) in the file's directory.
+         * - Launches CMD and navigates to the file's directory using `cd /d`.
+         * - Displays an error dialog if the operation fails.
          */
         functionCMD = (al) -> {
-
             try {
-                
-               
-                String command="cmd /c start cmd.exe /k\"cd /d"+(fileAddress)+"\"";
+                String command = "cmd /c start cmd.exe /k \"cd /d " + fileAddress + "\"";
                 Runtime.getRuntime().exec(command);
-
-            
             } catch (IOException e) {
                 e.printStackTrace();
-                // Show an error dialog if the command fails to execute
                 JOptionPane.showMessageDialog(null, "Something went wrong ..!");
             }
         };
@@ -1022,6 +984,8 @@ class NotepadUserInterface {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+
+                    // [!]penting:Number validation step
                     // Parse the font size entered in the text field and update the font size
                     currentFontSize = Integer.parseInt(fontTextField.getText());
 
@@ -1034,7 +998,8 @@ class NotepadUserInterface {
             }
         };
 
-    }
+    }// NON-STATIC INITIALIZER1-END
+
     {
         // Attempt to set the Look and Feel of the UI to match the system's native
         // appearance
@@ -1057,29 +1022,40 @@ class NotepadUserInterface {
         }
     }
 
+    /**
+     * Method responsible for the "Save As" functionality in the application.
+     *
+     * This method allows the user to save the current content of the text area
+     * to a new file by selecting a file name and location.
+     */
     void saveAs() {
+        // Open a file dialog for saving the file
         fileDialog = new FileDialog(mainFrame, "open", FileDialog.SAVE);
+        fileDialog.setVisible(true); // Make the dialog visible
 
-        fileDialog.setVisible(true);
+        // Retrieve the selected file name and directory
         fileName = fileDialog.getFile();
         fileAddress = fileDialog.getDirectory();
-        mainFrame.setTitle(fileName);
-        menuBarElementCMD.setEnabled(true);
+        mainFrame.setTitle(fileName); // Update the main frame title with the file name
+        menuBarElementCMD.setEnabled(true); // Enable CMD option in the menu bar
 
         // Check if the user selected a valid file
         if (fileDialog.getFile() != null) {
-            fileName = fileDialog.getFile();
-            fileAddress = fileDialog.getDirectory();
+            fileName = fileDialog.getFile(); // Get the selected file name
+            fileAddress = fileDialog.getDirectory(); // Get the selected directory
         } else {
+            // If no file is selected, reset the title and file-related variables
             mainFrame.setTitle("untitled");
             fileName = "untitled";
         }
 
-        // Try to write the content to the selected file
+        // Try to write the current content of the text area to the selected file
         try (FileWriter fileWriterObj = new FileWriter(fileAddress + fileName)) {
-            fileWriterObj.write(textAreaMainFrame.getText());
-            fileWriterObj.close();
+            fileWriterObj.write(textAreaMainFrame.getText()); // Write content to the file
+            fileWriterObj.close(); // Close the file writer
         } catch (IOException e1) {
+            // If an error occurs during file writing, reset the title and clear the text
+            // area
             mainFrame.setTitle("nofile");
             textAreaMainFrame.setText("");
         }
